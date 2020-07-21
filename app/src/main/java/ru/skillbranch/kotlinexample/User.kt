@@ -30,7 +30,7 @@ class User private constructor(
 
     private var phone: String? = null
         set(value) {
-            field = value?.replace("""[^+\d]""".toRegex(), "")
+            field = createPhone(value)
         }
 
     private var _login: String? = null
@@ -52,7 +52,7 @@ class User private constructor(
         lastName: String?,
         email: String,
         password: String
-    ) : this(firstName, lastName, email = email, meta = mapOf("auth" to "pass")) {
+    ) : this(firstName, lastName, email = email, meta = mapOf("auth" to "password")) {
         println("Secondary email constructor")
         passwordHash = encrypt(password)
     }
@@ -63,15 +63,22 @@ class User private constructor(
         rawPhone: String
     ) : this(firstName, lastName, rawPhone = rawPhone, meta = mapOf("auth" to "sms")) {
         println("Secondary phone constructor")
-        val code = generateAccessCode()
-        passwordHash = encrypt(code)
-        accessCode = code
+        val code = changeAccessCode()
         sendAccessCodeToUser(rawPhone, code)
     }
 
+    fun changeAccessCode(): String {
+        if (phone == null) return ""
+        val code = generateAccessCode()
+        passwordHash = encrypt(code)
+        accessCode = code
+        return code
+    }
+
     init {
-        check(!firstName.isNotBlank()) { "First name must not be blank" }
-        check(email.isNullOrBlank() || rawPhone.isNullOrBlank()) { "Email or phone must not be null or blank" }
+        check(firstName.isNotBlank()) { "First name must not be blank" }
+        check(!email.isNullOrBlank() || !rawPhone.isNullOrBlank()) { "Email or phone must not be null or blank" }
+        if (rawPhone != null) require(isValidPhone(rawPhone)) { "Enter a valid phone number starting with a + and containing 11 digits" }
 
         phone = rawPhone
         login = email ?: phone!!
@@ -90,8 +97,11 @@ class User private constructor(
 
     fun generateAccessCode(): String {
         val possible = mutableListOf<Char>().also {
-            for (letter in 'A'..'Z') {
+            for (letter in 'A'..'z') {
                 it.add(letter)
+            }
+            for (digit in 0..9) {
+                it.add(digit.toChar())
             }
         }
             .joinToString()
@@ -137,6 +147,15 @@ class User private constructor(
     }
 
     companion object Factory {
+        fun isValidPhone(text: String): Boolean {
+            val phone = createPhone(text)
+            return phone?.matches("""\+\d{11}""".toRegex()) == true && phone.length == 12
+        }
+
+        fun createPhone(rawPhone: String?): String? {
+            return rawPhone?.replace("""[^+\d]""".toRegex(), "")
+        }
+
         fun makeUser(
             fullName: String,
             email: String? = null,
