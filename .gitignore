@@ -25,3 +25,6 @@
 /app/src/androidTest
 /app/src/main/res
 /app/src/main/AndroidManifest.xml
+/.idea
+README.MD
+/app/proguard-rules.pro
