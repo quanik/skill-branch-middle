@@ -24,11 +24,11 @@ import ru.skillbranch.skillarticles.R.layout
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
-import ru.skillbranch.skillarticles.viewmodels.base.Notify
-import ru.skillbranch.skillarticles.viewmodels.base.Notify.ActionMessage
-import ru.skillbranch.skillarticles.viewmodels.base.Notify.ErrorMessage
-import ru.skillbranch.skillarticles.viewmodels.base.Notify.TextMessage
-import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
+import ru.skillbranch.skillarticles.viewmodels.Notify
+import ru.skillbranch.skillarticles.viewmodels.Notify.ActionMessage
+import ru.skillbranch.skillarticles.viewmodels.Notify.ErrorMessage
+import ru.skillbranch.skillarticles.viewmodels.Notify.TextMessage
+import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
     private lateinit var viewModel: ArticleViewModel
